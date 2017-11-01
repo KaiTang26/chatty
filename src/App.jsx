@@ -39,20 +39,6 @@ class App extends Component {
   }, 3000);
  }
 
- _handleKeyPress = (e) => {
-
-  console.log(e.target.value);
-    if (e.key === 'Enter') {
-      const Id = Math.floor(Math.random() * (100 - 0) + 0)
-
-      let arr = this.state.messages;
-      arr.push({id:Id , username:"Bob", content:e.target.value})
-
-      this.setState({messages:arr});
-
-      console.log('do validate');
-    }
-    }
 
 
   render() {
@@ -68,10 +54,21 @@ class App extends Component {
 
       <MessageList {...this.state}/>
 
-      <ChatBar {...this.state.currentUser} handleKeyPress={this._handleKeyPress.bind(this)}/>
+      <ChatBar {...this.state.currentUser} postSave={this._postSave}/>
 
       </div>
     );
   }
+
+  _postSave = (e) => {
+
+    const newMessages = this.state.messages;
+
+    newMessages.push(e);
+
+    this.setState({messages:newMessages})
+
+  }
+
 }
 export default App;
