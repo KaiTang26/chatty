@@ -9,11 +9,8 @@ class ChatBar extends Component{
     super(props);
 
     this.state={
-
-      id:4,
-      username: "",
+      username: "Anonymous",
       content: "",
-
     }
   }
 
@@ -27,8 +24,8 @@ class ChatBar extends Component{
 
       <dic>
       <footer className="chatbar">
-        <input className="chatbar-username" placeholder="Bob" onChange={this._changeUserName} value={this.state.username}/>
-        <input className="chatbar-message" placeholder="Type a message and hit ENTER" onChange={this._changeContent}  value={this.state.content} onKeyPress={this._handleKeyPress}/>
+        <input className="chatbar-username" placeholder="Name (optional)" onChange={this._changeUserName} value={this.state.username} onKeyPress={this._handleNameKeyPress}/>
+        <input className="chatbar-message" placeholder="Type a message and hit ENTER" onChange={this._changeContent}  value={this.state.content} onKeyPress={this._handleTextKeyPress}/>
       </footer>
       </dic>
 
@@ -52,29 +49,46 @@ class ChatBar extends Component{
         );
     }
 
-  _handleKeyPress = (e) => {
+  _handleTextKeyPress = (e) => {
 
-      if (e.key === 'Enter') {
+    if (e.key === 'Enter' && this.state.content) {
 
-        this.props.postSave(
+      this.props.postSave(
         {
-          id: this.state.id,
           username: this.state.username,
           content: this.state.content
 
         })
+      this.setState({content: ''})
 
-        this.setState(
-          {
-          id: this.state.id+1,
-          username: '',
-          content: ''
-
-        })
-          console.log('do validate');
-        }
-
+      console.log('do validate');
     }
+
+  }
+
+  _handleNameKeyPress = (e) => {
+
+    if (e.key === 'Enter' && this.props.name !== this.state.username) {
+
+      if(this.state.username){
+
+        this.props.postSave(
+        {
+          username: this.state.username,
+        })
+
+      }else{
+
+        this.setState({username:"Anonymous"}, ()=>{
+
+          this.props.postSave({username: this.state.username})
+        })
+
+      }
+         console.log('do validate');
+    }
+
+  }
 
 
 

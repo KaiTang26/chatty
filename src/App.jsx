@@ -11,18 +11,11 @@ class App extends Component {
     super(props);
 
     this.state={
-      currentUser: {name: "Bob"}, // optional. if currentUser is not defined, it means the user is Anonymous
-         messages: [
-                      {id:1,
-                       username: "Bob",
-                       content: "Has anyone seen my marbles?",
-                      },
-                      {id:2,
-                        username: "Anonymous",
-                        content: "No, I think you lost them. You lost your marbles Bob. You lost them for good."
-                      }
-                    ]
+      currentUser: {name: "Anonymous"}, // optional. if currentUser is not defined, it means the user is Anonymous
+         messages: []
     }
+
+
 
   }
 
@@ -37,8 +30,50 @@ class App extends Component {
     // Calling setState will trigger a call to render() in App and all child components.
     this.setState({messages: messages})
   }, 3000);
- }
 
+   this.ws = new WebSocket("ws://localhost:3001");
+
+   this.ws.onopen=(ev)=>{
+     console.log('Connected to server');
+   }
+
+   this.ws.onmessage=(ev)=>{
+      const newMessages = this.state.messages;
+
+      const message = JSON.parse(ev.data);
+
+      switch(message.type){
+
+        case "incomingNotification":
+
+          newMessages.push(message);
+
+          this.setState({messages:newMessages})
+
+          console.log(message);
+
+          break;
+
+        case "incomingMessage":
+
+          newMessages.push(message);
+
+          this.setState({messages:newMessages})
+
+          break;
+
+        default:
+
+          throw new Error(`Unknown event type ${message.type}`)
+
+
+      }
+
+
+
+    }
+
+ }
 
 
   render() {
@@ -62,11 +97,44 @@ class App extends Component {
 
   _postSave = (e) => {
 
-    const newMessages = this.state.messages;
+    // console.log(e);
 
-    newMessages.push(e);
+    if(e.username!==this.state.currentUser.name){
 
-    this.setState({messages:newMessages})
+      const userA = this.state.currentUser.name;
+
+      this.setState({currentUser:{name: e.username}}, ()=>{
+
+        const userB = this.state.currentUser.name;
+
+        const message ={
+          type: "postNotification",
+          content: `${userA} has changed their name to ${userB}`
+        }
+
+        this.ws.send(JSON.stringify(message));
+
+      });
+
+
+    }else{
+
+
+      const message ={
+          type: "postMessage",
+          username: e.username,
+          content: e.content
+        }
+
+
+
+      this.ws.send(JSON.stringify(message));
+
+    }
+
+
+
+
 
   }
 

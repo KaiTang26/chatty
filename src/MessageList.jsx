@@ -30,12 +30,6 @@ class MessageList extends Component{
 
         })}
 
-
-
-
-
-
-
         </main>
 
       </div>
