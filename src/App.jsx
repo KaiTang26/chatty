@@ -11,9 +11,10 @@ class App extends Component {
     super(props);
 
     this.state={
-      currentUser: {name: "Anonymous", color:"#00ff00"}, // optional. if currentUser is not defined, it means the user is Anonymous
+      currentUser: {name: "Anonymous"}, // optional. if currentUser is not defined, it means the user is Anonymous
          messages: [],
-         userNumber: 0
+         userNumber: 0,
+         color:"#00ff00"
     }
 
 
@@ -34,7 +35,19 @@ class App extends Component {
 
    this.ws = new WebSocket("ws://localhost:3001");
 
+   const color=["#00ff00", "#ff0000", "#0040ff", "#6600cc", "#ffff00", "#FFBD33", "#3396FF", "#33FFC4", "#33FFB2", "#B8FF33"];
+
+   const i = this._colorPicker();
+
+   console.log(color[i])
+
    this.ws.onopen=(ev)=>{
+
+    this.setState({color:color[i]},()=>{
+
+    });
+
+
      console.log('Connected to server');
    }
 
@@ -105,17 +118,16 @@ class App extends Component {
 
   _postSave = (e) => {
 
-    const color=["#00ff00", "#ff0000", "#0040ff", "#6600cc", "#ffff00", "#FFBD33", "#3396FF", "#33FFC4", "#33FFB2", "#B8FF33"];
+
 
     // console.log(e);
 
     if(e.username!==this.state.currentUser.name){
 
-      const i = this._colorPicker();
 
       const userA = this.state.currentUser.name;
 
-      this.setState({currentUser:{name: e.username, color: color[i]}}, ()=>{
+      this.setState({currentUser:{name: e.username}}, ()=>{
 
         const userB = this.state.currentUser.name;
 
@@ -135,7 +147,7 @@ class App extends Component {
           type: "postMessage",
           username: e.username,
           content: e.content,
-          color: this.state.currentUser.color
+          color: this.state.color
         }
 
       this.ws.send(JSON.stringify(message));
