@@ -28,7 +28,7 @@ npm run lint
 ```
 
 ### Screenshots
-!["Screenshot of Chatty App"]()
+!["Screenshot of Chatty App"](https://github.com/KaiTang26/chatty/blob/master/docs/Chatty.png)
 
 ### Dependencies for React and webpack
 
